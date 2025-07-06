@@ -7,6 +7,11 @@ class User(BaseModel):
     graduate: bool = None
 
 test = FastAPI()
+'''
+To check documentation, go to the following endpoints
+1. /redoc -> redoc: reading the documentation only
+2. /docs -> SwaggerUI: can try out the api
+'''
 
 @test.get("/")
 def read_root():
