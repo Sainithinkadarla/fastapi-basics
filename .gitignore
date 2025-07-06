@@ -3,3 +3,4 @@ Scripts
 CACHEDIR.TAG
 pyvenv.cfg
 */__pycache__
+*/*.db
