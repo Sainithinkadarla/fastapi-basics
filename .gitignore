@@ -3,6 +3,8 @@ Scripts
 CACHEDIR.TAG
 pyvenv.cfg
 */__pycache__
+*/*/*/__pycache__
+*/*/*/.env
 */*.db
 include
 */log.txt
