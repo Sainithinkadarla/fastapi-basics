@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, status, Depends
-from security import create_access_token, verify_token
+from security import create_access_token_role, verify_token
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordRequestForm
 #!pip install passlib, python-dotenv, pyjwt, python-multipart
@@ -15,7 +15,8 @@ async def login(formdata: OAuth2PasswordRequestForm = Depends()):
     user = User(username=formdata.username, password=formdata.password)
 
     if user.username == "admin" and user.password == "pass":
-        access_token = create_access_token({"sub":user.username})
+        # access_token = create_access_token({"sub":user.username})
+        access_token = create_access_token_role({"sub":user.username}, role = "admin")
         return {"access_token": access_token, "token_type": "Bearer"}
     
     raise HTTPException(

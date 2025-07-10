@@ -27,6 +27,13 @@ def create_access_token(data:dict, expire_delta:timedelta=None):
     encoded = jwt.encode(to_encode, KEY, algorithm=ALGORITHM)
     return encoded
 
+def create_access_token_role(data:dict, role:str, expire_delta:timedelta=None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + expire_delta if expire_delta else expire_delta = timedelta(minutes=EXPIRE_TIME)
+    to_encode.update({"expire":expire.isoformat(), "role": role})
+    encoded = jwt.encode(to_encode, KEY, algorithm=ALGORITHM)
+    return encoded
+
 def verify_token(token:str):
     try:
         decoded = jwt.decode(token, KEY, algorithms=[ALGORITHM])
