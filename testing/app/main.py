@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from routes import router
-from external_api import external_data
+from .routes import router
+from .external_api import external_data
 
 app = FastAPI(title="API testing")
 
