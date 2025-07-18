@@ -14,7 +14,7 @@ class Item(Base):
     name = Column(String, index = True)
     description = Column(String, index = True)
 
-database_url = ""
+database_url = "postgresql://fastapi_user:chanduk1234@40.90.236.51/fastapi_db"
 
 engine = create_engine(database_url)
 SessionLocal = sessionmaker(autocommit= False, autoflush=False, bind=engine)
