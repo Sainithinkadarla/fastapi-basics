@@ -43,3 +43,8 @@ async def get_item(item_id: int, db: Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail= "Item not found")
     return {"id": item.id, "name": item.name, "description": item.description}
     # return item
+
+@app.get("/getallitems")
+async def get_all_users(db: Session = Depends(get_db)):
+    items = db.query(Item).all()
+    return [item for item in items]
