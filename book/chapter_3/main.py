@@ -151,3 +151,14 @@ class Post(BaseModel):
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 async def create_post(post: Post):
     return post
+
+## When we have nothing to return like deleting a object
+
+posts = {
+    1: Post(title="Hello", nb_views=100),
+}
+
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(id: int):
+    posts.pop(id, None)
+    return None
