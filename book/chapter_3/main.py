@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile
+from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie
 from enum import Enum
 from pydantic import BaseModel
 
@@ -117,3 +117,19 @@ async def multi_file_upload(files : list[UploadFile] = File(...)):
     return { file.filename : {"Filename" : file.filename, 
                               "File Extension" : file.filename.split('.')[1], 
                               "File Length" : file.size } for file in files}
+
+
+# Headers and cookies
+## Headers
+# Import Headers function from fastapi
+@app.post("/")
+async def headers(hello: str = Header(...)):
+    return {"hello" : hello}
+
+@app.get("/default-header")
+async def get_default_header(user_agent: str = Header(...), accept_encoding: str = Header(...)):
+    return {"user_agent" : user_agent, "length" : accept_encoding}
+
+@app.get("/cookie")
+async def get_cookie(hello : str | None = Cookie(None)):
+    return {"cookie" : hello}
