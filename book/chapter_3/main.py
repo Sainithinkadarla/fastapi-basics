@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, Body
+from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile
 from enum import Enum
 from pydantic import BaseModel
 
@@ -91,3 +91,29 @@ async def create_user(user: User, company: Company):
 @app.post("/task")
 async def create_task(user: User, priority: int = Body(..., ge=1, le=3)):
     return {"user" : user, "priority" : priority}
+
+# Form data and file uploads
+## Form data
+# Import Form function from fastapi
+@app.post("/users-form")
+async def form_data(name: str = Form(...), age: int = Form(...)):
+    return {"Name" : name, "Age" : age}
+
+## File upload
+# import File function from fastapi
+@app.post("/files")
+async def upload_file(file: bytes = File(...)):
+    return {"Length" : len(file)}
+
+# File function is not efficient for larger file
+# So, we have a class UploadFile
+# import UploadFile function from fastapi
+@app.post("/fileupload")
+async def upload_file(file: UploadFile = File(...)):
+    return {"Length" : file.size, "Type" : file.content_type, "Filename" : file.filename, "Extension" : file.filename.split('.')[1]}
+
+@app.post("/multifile")
+async def multi_file_upload(files : list[UploadFile] = File(...)):
+    return { file.filename : {"Filename" : file.filename, 
+                              "File Extension" : file.filename.split('.')[1], 
+                              "File Length" : file.size } for file in files}
