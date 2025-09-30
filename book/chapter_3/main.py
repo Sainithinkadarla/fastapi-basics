@@ -12,6 +12,7 @@ app = FastAPI()
 async def home():
     return {'Message': "Welcome Home"}
 
+# Path parameters
 @app.get("/users/{id}")
 async def get_user_id(id: int):
     return {"Response": f"{id} is retrieved" }
@@ -37,3 +38,6 @@ async def get_license(license: str = Path(..., min_length=9, max_length=9)):
 @app.get("/license-plates-regex/{license}", description="It's a endpoint which uses regular expressions also")
 async def get_license(license: str = Path(..., regex=r"^\w{2}-\d{3}-\w{2}$")):
     return {"license": license, "Result" : "Valid"}
+
+
+# Query parameters
