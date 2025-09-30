@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie
+from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status
 from enum import Enum
 from pydantic import BaseModel
 
@@ -133,3 +133,21 @@ async def get_default_header(user_agent: str = Header(...), accept_encoding: str
 @app.get("/cookie")
 async def get_cookie(hello : str | None = Cookie(None)):
     return {"cookie" : hello}
+
+# Request object
+# Import Request class from fastapi package
+@app.get("/request")
+async def get_req_obj(req: Request):
+    return {"Message" : req.url}
+
+
+# Response customization
+
+# status code
+# Inorder to change the status code, import status class/enum from fastapi
+class Post(BaseModel):
+    title: str
+
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
+async def create_post(post: Post):
+    return post
