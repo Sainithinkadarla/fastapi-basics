@@ -171,7 +171,7 @@ class ResPost(BaseModel):
 class PublicPost(BaseModel):
     title: str
 
-@app.get("/posts/{id}", response_model=PublicPost)
+@app.get("/posts_res/{id}", response_model=PublicPost)
 async def get_res_post(id: int):
     return posts[id]
 
