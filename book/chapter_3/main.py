@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status
+from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status, Response
 from enum import Enum
 from pydantic import BaseModel
 
@@ -155,10 +155,30 @@ async def create_post(post: Post):
 ## When we have nothing to return like deleting a object
 
 posts = {
-    1: Post(title="Hello", nb_views=100),
+    1: Post(title="My post", nb_views=100),
 }
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(id: int):
     posts.pop(id, None)
     return None
+
+# The Response model
+class ResPost(BaseModel):
+    title: str
+    nb_views: int
+
+class PublicPost(BaseModel):
+    title: str
+
+@app.get("/posts/{id}", response_model=PublicPost)
+async def get_res_post(id: int):
+    return posts[id]
+
+# The Response parameter
+# Import Response from the fastapi package
+## setting headers
+@app.get("/customHeader")
+async def get_custom_header(response: Response):
+    response.headers["My-custom-Header"] = "My-Custom-Header-Value"
+    return {"Message": "See the header"}
