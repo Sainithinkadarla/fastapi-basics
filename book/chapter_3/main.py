@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status, Response
+from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status, Response, HTTPException
 from enum import Enum
 from pydantic import BaseModel
 
@@ -200,3 +200,17 @@ async def create_post(id: int, post: Post, response: Response):
 @app.get("/posts")
 async def get_all_posts():
     return posts
+
+# Rasing HTTP Errors
+# Import HTTPException class from fastapi package
+@app.post("/passwd_check")
+async def passwd_match(passwd: str = Body(...), confirm_passwd: str = Body(...)):
+    if passwd != confirm_passwd:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "Message": "Password doesn't match",
+                "hints": ["Check caps lock on your keyboard", "Try to  make the password visible by clicking "]
+            }
+        )
+    return {"Message": "Passwords match!"}
