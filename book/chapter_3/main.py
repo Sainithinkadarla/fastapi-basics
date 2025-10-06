@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Path, Query, Body, Form, File, UploadFile, Header, Cookie, Request, status, Response, HTTPException
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, FileResponse
 from enum import Enum
 from pydantic import BaseModel
+
+import pathlib
 
 class UserType(str, Enum):
     HR = 'hr'
@@ -214,3 +217,51 @@ async def passwd_match(passwd: str = Body(...), confirm_passwd: str = Body(...))
             }
         )
     return {"Message": "Passwords match!"}
+
+# Building Custom response
+# Import HTMLResponse and PlainTextResponse from fastapi.responses
+@app.get("/html", response_class= HTMLResponse)
+async def get_html():
+    return """
+                <html>
+                <head>
+                    <title>Sample page</title>
+                </head>
+                    <body>
+                        <h1>This a  heading 1</h1>
+                        <p> This is a body</p>
+                    </body>
+                </html>
+            """
+
+@app.get("/text", response_class = PlainTextResponse)
+async def get_plaintext():
+    return "Hello this is a plain text"
+
+## Redirection
+# Import RedirectReponse from fastapi.responses
+@app.get("/redirect")
+async def redirect():
+    return RedirectResponse("/posts")
+
+## hanging the status code with RedirectResponse object
+@app.get("/redirect_status")
+async def another_redirect():
+    return RedirectResponse("/posts", status_code=status.HTTP_301_MOVED_PERMANENTLY)
+
+## FileResponse
+# Import FileResponse from fastapi.responses
+# import Path from pathlib
+@app.get("/file")
+async def get_file():
+    root_dir = pathlib.Path(__file__).parent.parent
+    response_file = root_dir / "sample.png"
+    return FileResponse(response_file, filename = "test.png")
+
+## Custom response
+@app.get("/xml")
+async def custom_response():
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+        <Hello>World</Hello>
+    """
+    return Response(content= content, media_type="application/xml")
