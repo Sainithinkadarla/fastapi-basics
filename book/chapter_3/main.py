@@ -177,8 +177,26 @@ async def get_res_post(id: int):
 
 # The Response parameter
 # Import Response from the fastapi package
-## setting headers
+## Setting headers
 @app.get("/customHeader")
 async def get_custom_header(response: Response):
     response.headers["My-custom-Header"] = "My-Custom-Header-Value"
     return {"Message": "See the header"}
+
+## Setting cookies
+@app.get("/getcookie")
+async def custom_header(response: Response):
+    response.set_cookie("Mycookie", "Cookie-Value", max_age=86400)
+    return {"Message": "See the header for cookie"}
+
+## Setting the status code dynamically
+@app.put("/posts/{id}")
+async def create_post(id: int, post: Post, response: Response):
+    if id not in posts:
+        posts[id] = post
+        response.status_code = status.HTTP_201_CREATED
+    return posts[id]
+
+@app.get("/posts")
+async def get_all_posts():
+    return posts
