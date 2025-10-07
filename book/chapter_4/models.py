@@ -184,4 +184,18 @@ class UserRegistration(BaseModel):
             print("Account successfully created")
         return values
     
-user1 = UserRegistration(username="jhn@mailinator.com", password= "bdill", confirm_password="bill" )
+user1 = UserRegistration(username="jhn@mailinator.com", password= "bill", confirm_password="bill" )
+
+
+# Validating before parsing
+class Model(BaseModel):
+    values: list[int]
+
+    @field_validator("values", mode="before")
+    def splitter(cls, v):
+        if isinstance(v, str):
+            return v.split(",")
+        return v
+    
+m = Model(values="1,2,3")
+print(m.values)
