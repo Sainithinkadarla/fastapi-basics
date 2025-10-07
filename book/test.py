@@ -38,3 +38,8 @@ async def create(post_create: PostCreate):
 
     db.posts[new_id] = post
     return post
+
+@app.post("/get_all")
+async def read():
+    print(db.posts.keys())
+    return db.posts
