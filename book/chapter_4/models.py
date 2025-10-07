@@ -199,3 +199,13 @@ class Model(BaseModel):
     
 m = Model(values="1,2,3")
 print(m.values)
+
+# Working with Pydantic objects
+# Converting an object into dictionary
+person1 = Person(first_name="Khan", last_name="Khan", gender="male", birthdate="2003-03-03", age = 21, interests=["Music"],
+                 address={"street": "Lord",
+                          "postal_code": "2342423",
+                          "city": "New York",
+                          "country": "USA"})
+person_dict = person1.model_dump() # p1 is created at start
+print(person_dict["address"]["street"])
