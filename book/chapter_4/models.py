@@ -191,6 +191,9 @@ user1 = UserRegistration(username="jhn@mailinator.com", password= "bill", confir
 class Model(BaseModel):
     values: list[int]
 
+    def display(self):
+        print(self)
+
     @field_validator("values", mode="before")
     def splitter(cls, v):
         if isinstance(v, str):
@@ -209,3 +212,19 @@ person1 = Person(first_name="Khan", last_name="Khan", gender="male", birthdate="
                           "country": "USA"})
 person_dict = person1.model_dump() # p1 is created at start
 print(person_dict["address"]["street"])
+
+## Including and Excluding 
+person_include = person1.model_dump(include={"first_name", "last_name"})
+print(person_include)
+
+person_exclude = person1.model_dump(exclude={'age', "address"})
+print(person_exclude)
+
+### sub-dictionary level including and excluding
+person_subdict = person1.model_dump(include={"first_name": ...,
+                                             "last_name": ...,
+                                             "address": {'city', "country"}})
+print(person_subdict)
+
+
+m.display()
