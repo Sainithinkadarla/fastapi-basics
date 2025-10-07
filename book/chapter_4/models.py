@@ -191,9 +191,6 @@ user1 = UserRegistration(username="jhn@mailinator.com", password= "bill", confir
 class Model(BaseModel):
     values: list[int]
 
-    def display(self):
-        print(self)
-
     @field_validator("values", mode="before")
     def splitter(cls, v):
         if isinstance(v, str):
@@ -225,6 +222,3 @@ person_subdict = person1.model_dump(include={"first_name": ...,
                                              "last_name": ...,
                                              "address": {'city', "country"}})
 print(person_subdict)
-
-
-m.display()
