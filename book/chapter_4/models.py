@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError, Field
+from pydantic import BaseModel, ValidationError, Field, field_validator, model_validator
 from enum import Enum
 from datetime import date
 
@@ -127,3 +127,61 @@ try:
     print(u1)
 except ValidationError as e:
     print(e)
+
+# Creating model variations with class inheritance
+class PostBase(BaseModel):
+    title: str
+    content: str
+    # we can also define functions in pydantic models
+    def excerpt(self):
+        return f"{self.content[:140]}..."
+
+class PostCreate(PostBase):
+    pass
+
+class PostRead(PostBase):
+    id : int
+
+class Post(PostBase):
+    id : int
+    nb_views: int = 0
+
+# Custom validation 
+## Field level validation
+# Import field_validator from pydantic 
+from datetime import date
+class Customer(BaseModel):
+    firstname: str
+    lastname: str
+    birthdate: date
+
+    @field_validator("birthdate")
+    def valid_birthdate(cls, v:date):
+        delta = date.today() - v
+        age = delta.days / 365
+        if age > 120:
+            raise ValueError("You're too old")
+        else:
+            print("You are eligible to have account")
+        return v
+
+c1 = Customer(firstname="jim", lastname="kim", birthdate= "1999-11-01" )
+
+## Object level validation
+# Import root_validator decorator from pydantic
+class UserRegistration(BaseModel):
+    username: EmailStr
+    password: str
+    confirm_password: str
+
+    @model_validator(mode="after")
+    def password_match(cls, values):
+        password = values.password
+        confirm_password = values.confirm_password
+        if password != confirm_password:
+            raise ValueError("passwords doesn't match")
+        else:
+            print("Account successfully created")
+        return values
+    
+user1 = UserRegistration(username="jhn@mailinator.com", password= "bdill", confirm_password="bill" )
