@@ -10,3 +10,4 @@ include
 */log.txt
 share/
 *.png
+*/test.py
