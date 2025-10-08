@@ -91,3 +91,46 @@ async def update_post( update_post: PostUpdate,
 async def delete_post(post: Post = Depends(get_post_obj)):
     db.posts.pop(post.id)
     # return None
+
+
+# Parameterized dependency with class
+class Pagination:
+    def __init__(self, maximum_limit: int = 100):
+        self.maximum_limit = maximum_limit
+
+    async def __call__(self, skip: int = Query(0, ge=0), limit: int = Query(10, ge=0)) -> tuple[int, int]:
+        capped_limit = min(self.maximum_limit, limit)
+        return (skip, capped_limit)
+
+pagination = Pagination(maximum_limit=500)
+
+@app.get("/pets")
+async def list_pets(p: tuple[int, int] = Depends(pagination)):
+    return {"skip": p[0], "limit": p[1]}
+
+## Using class methods as dependencies
+class CustomPagination:
+    def __init__(self, maximum_limit):
+        self.maximum_limit = maximum_limit
+
+    async def skip_limit(self, skip: int = Query(0, ge=0), 
+                         limit: int = Query(10, ge=0)
+                         ) -> tuple[int, int]:
+        capped_limit = min(self.maximum_limit, limit)
+        return (skip, capped_limit)
+    
+    async def page_size(self, page: int = Query(1, ge=1),
+                        size: int = Query(10, ge=0)
+                        ) -> tuple[int, int]:
+        capped_size = min(self.maximum_limit, size)
+        return (page, capped_size)
+    
+custom_pagination = CustomPagination(maximum_limit = 50)
+
+@app.get("/houses")
+async def get_houses(p: tuple[int, int] = Depends(custom_pagination.skip_limit)):
+    return {"skip": p[0], "limit": p[1]}
+
+@app.get("/blogs")
+async def get_blogs(p: tuple[int, int] = Depends(custom_pagination.page_size)):
+    return {"page": p[0], "size": p[1]}
