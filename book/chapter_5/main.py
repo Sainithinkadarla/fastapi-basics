@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Query, HTTPException, status
+from fastapi import FastAPI, Depends, Query, HTTPException, status, Header, APIRouter
 from pydantic import BaseModel
 
 class PostBase(BaseModel):
@@ -24,7 +24,11 @@ class DB():
 
 db = DB()
 
-app = FastAPI()
+def secret_header(secret_header: str | None = Header(None)) -> None:
+    if not secret_header or secret_header != "secret-value":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    
+app = FastAPI(dependencies=[Depends(secret_header)])
 
 # function dependency
 async def pagination(skip: int = 0, limit: int = 10) -> tuple[int, int]:
@@ -134,3 +138,44 @@ async def get_houses(p: tuple[int, int] = Depends(custom_pagination.skip_limit))
 @app.get("/blogs")
 async def get_blogs(p: tuple[int, int] = Depends(custom_pagination.page_size)):
     return {"page": p[0], "size": p[1]}
+
+
+# Dependencies at path, router, global level
+## path decorator level
+# secret-header function is implmented at line 27
+    
+@app.get("/protected-route", dependencies=[Depends(secret_header)])
+async def protect_route():
+    return {"hello": "world"}
+
+## router level decorator level
+### setting at APIRouter object instantiation
+student_router = APIRouter(dependencies=[Depends(secret_header)])
+
+@student_router.get("/r1")
+async def route1():
+    return {"Message": "student Route 1"}
+
+@student_router.get("/r2")
+async def route2():
+    return {"Message": "student Route 2"}
+
+app.include_router(student_router, prefix="/students")
+
+### setting in include_router method
+
+teachers_router = APIRouter()
+
+@teachers_router.get("/r1")
+async def route1():
+    return {"Message": "teachers Route 1"}
+
+@teachers_router.get("/r2")
+async def route2():
+    return {"Message": "teachers Route 2"}
+
+app.include_router(teachers_router, prefix="/teachers", dependencies=[Depends(secret_header)])
+
+
+### global app level dependency
+# I implemented for this app itself check at line 31
