@@ -21,7 +21,6 @@ async def get_post_or_404(id: int, session: AsyncSession = Depends(get_async_ses
     query = select(Post).where(Post.id == id)
     result = await session.execute(query)
     post = result.scalar_one_or_none()
-    print(post.id)
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -29,10 +28,9 @@ async def get_post_or_404(id: int, session: AsyncSession = Depends(get_async_ses
     return post
 
 
-
-
 app = FastAPI(lifespan=lifespan)
 
+# creating a object
 @app.post("/posts", response_model=PostRead, status_code=status.HTTP_201_CREATED)
 async def create_post(post_create: PostCreate, session: AsyncSession = Depends(get_async_session)):
     post = Post(**post_create.model_dump())
@@ -40,6 +38,7 @@ async def create_post(post_create: PostCreate, session: AsyncSession = Depends(g
     await session.commit()
     return post
 
+# getting all objects
 @app.get("/posts", response_model=list[PostRead])
 async def get_posts(pagination: tuple[int, int] = Depends(pagination), 
                     session: AsyncSession = Depends(get_async_session)):
@@ -49,7 +48,9 @@ async def get_posts(pagination: tuple[int, int] = Depends(pagination),
     results = await session.execute(query)
     return results.scalars().all()
 
+# getting single object
 @app.get("/posts/{id}", response_model=PostRead)
 async def get_post(post: Post = Depends(get_post_or_404)):
     return post
-    
+
+# updating objects
