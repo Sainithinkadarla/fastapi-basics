@@ -54,3 +54,22 @@ async def get_post(post: Post = Depends(get_post_or_404)):
     return post
 
 # updating objects
+@app.patch("/posts/{id}", response_model=PostRead)
+async def update_post(post_update: PostPartialUpdate, 
+                      post: Post = Depends(get_post_or_404),
+                      session: AsyncSession = Depends(get_async_session)):
+
+    update_fields = post_update.model_dump(exclude_unset=True)
+    for key, value in update_fields.items():
+        setattr(post, key, value)
+
+    session.add(post)
+    await session.commit()
+
+    return post
+
+# deleting objects
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post: Post = Depends(get_post_or_404), session: AsyncSession = Depends(get_async_session)):
+    await session.delete(post)
+    await session.commit()
