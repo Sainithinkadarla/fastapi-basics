@@ -3,10 +3,10 @@ from contextlib import asynccontextmanager
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from relation_project.schemas import PostCreate, PostPartialUpdate, PostRead, CommentRead, CommentCreate
-from relation_project.database import create_all_tables
-from relation_project.database import AsyncSession, get_async_session
-from relation_project.models import Post, Comment
+from schemas import PostCreate, PostPartialUpdate, PostRead, CommentRead, CommentCreate
+from database import create_all_tables
+from database import AsyncSession, get_async_session
+from models import Post, Comment
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
