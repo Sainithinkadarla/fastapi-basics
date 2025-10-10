@@ -23,3 +23,4 @@ class Post(Base):
     title : Mapped[str] = mapped_column(String(355), nullable=False)
     content : Mapped[str] = mapped_column(Text, nullable=False)
     comments: Mapped[list[Comment]] = Relationship("Comment", cascade="all, delete")
+    likes: Mapped[int] = mapped_column(Integer, nullable=True)
