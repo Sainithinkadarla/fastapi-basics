@@ -24,3 +24,10 @@ async def create_post(post_create: PostCreate, database: AsyncIOMotorDatabase = 
     # print(upload_post.inserted_id)
     result_post = await get_post_or_404(upload_post.inserted_id, database)
     return result_post
+
+# Getting all documents
+@app.get("/posts", response_model=list[Post])
+async def get_all(database: AsyncIOMotorDatabase = Depends(get_db)):
+    query = database['posts'].find({})
+    results = [Post(**raw_post) async for raw_post in query]
+    return results
