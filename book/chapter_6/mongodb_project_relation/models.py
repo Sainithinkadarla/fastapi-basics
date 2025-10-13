@@ -40,13 +40,23 @@ class MongoBaseModel(BaseModel):
         json_encoders = {ObjectId: str}
     )
 
+class CommentBase(BaseModel):
+    content: str
+    publication_date: datetime = Field(default_factory=datetime.now)
+
+class CommentCreate(CommentBase):
+    pass
+
+class Comment(CommentBase):
+    pass
+
 class PostBase(MongoBaseModel):
     title: str
     content: str
     publication_date: datetime = Field(default_factory=datetime.now)
 
 class Post(PostBase):
-    pass
+    comments: list[Comment] = Field(default_factory=list)
 
 class PostCreate(PostBase):
     pass

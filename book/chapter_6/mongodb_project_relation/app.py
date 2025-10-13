@@ -71,3 +71,16 @@ async def update_post(post_update: PostPartialUpdate,
 async def delete_post(post: Post = Depends(get_post_or_404),
                       database: AsyncIOMotorDatabase = Depends(get_db)):
     await database["posts"].delete_one({"_id": post.id})
+
+
+# Creating comment
+@app.post("/posts/{id}/comments", response_model=list[Comment],
+          status_code=status.HTTP_201_CREATED)
+async def create_comment(comment_create: CommentCreate, 
+                         database: AsyncIOMotorDatabase = Depends(get_db),
+                         post: Post = Depends(get_post_or_404)):
+    await database['posts'].update_one({"_id": post.id}, 
+                                       {"$push":{"comments": comment_create.model_dump()} })
+    updated_post = await get_post_or_404(post.id, database)
+
+    return updated_post.comments
