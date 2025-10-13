@@ -57,7 +57,7 @@ class MongoBaseModel(BaseModel):
         json_encoders = {ObjectId: str}
     )
 
-class PostBase(BaseModel):
+class PostBase(MongoBaseModel):
     title: str
     content: str
     publication_date: datetime = Field(default_factory=datetime.now)
