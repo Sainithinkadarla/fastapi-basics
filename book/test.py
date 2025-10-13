@@ -1,45 +1,43 @@
-from fastapi import FastAPI, status
-from pydantic import BaseModel
+# Save this file as test_motor_connection.py
 
+import asyncio
+import motor.motor_asyncio
+from pymongo.errors import ConnectionFailure
 
-class PostBase(BaseModel):
-    title: str
-    content: str
+# --- Configuration ---
+# Replace with your MongoDB connection string.
+MONGO_URI = "mongodb://192.168.29.94:27017/"
 
+async def test_mongodb_connection():
+    """
+    Tests the async connection to a MongoDB server using Motor.
+    """
+    print(f"Attempting to connect to MongoDB at {MONGO_URI}...")
+    
+    # Create an async client instance
+    client = motor.motor_asyncio.AsyncIOMotorClient(
+        MONGO_URI, 
+        serverSelectionTimeoutMS=5000
+    )
+    
+    try:
+        # The server_info() call is now an awaitable coroutine
+        await client.server_info()
+        print("✅ MongoDB connection successful!")
+        
+        # Optional: List databases asynchronously
+        db_list = await client.list_database_names()
+        print("Databases:", db_list)
+        
+    except ConnectionFailure as e:
+        print(f"❌ MongoDB connection failed: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    finally:
+        # Close the client connection
+        client.close()
+        print("Connection closed.")
 
-class PostCreate(PostBase):
-    pass
-
-
-class PostRead(PostBase):
-    id: int
-
-
-class Post(PostBase):
-    id: int
-    nb_views: int = 0
-
-
-class DummyDatabase:
-    posts: dict[int, Post] = {}
-
-
-db = DummyDatabase()
-
-
-app = FastAPI()
-
-
-@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=PostRead)
-async def create(post_create: PostCreate):
-    new_id = max(db.posts.keys() or (0,)) + 1
-
-    post = Post(id=new_id, **post_create.dict())
-
-    db.posts[new_id] = post
-    return post
-
-@app.post("/get_all")
-async def read():
-    print(db.posts.keys())
-    return db.posts
+if __name__ == "__main__":
+    # Run the async function using asyncio's event loop
+    asyncio.run(test_mongodb_connection())
