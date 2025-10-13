@@ -52,3 +52,22 @@ async def get_all(database: AsyncIOMotorDatabase = Depends(get_db),
 @app.get("/posts/{id}", response_model=Post)
 async def get_post(post: Post = Depends(get_post_or_404)):
     return post
+
+# Updating the document
+@app.patch("/posts/{id}")
+async def update_post(post_update: PostPartialUpdate,
+                      post: Post = Depends(get_post_or_404),
+                      database: AsyncIOMotorDatabase = Depends(get_db)):
+    
+    update_fields = post_update.model_dump(exclude_unset=True)
+    
+    await database["posts"].update_one({"_id": post.id}, {"$set": update_fields})
+
+    post = await get_post_or_404(post.id, database)
+    return post
+
+# Deleting the document
+@app.delete("/posts/{id}", status_code = status.HTTP_204_NO_CONTENT)
+async def delete_post(post: Post = Depends(get_post_or_404),
+                      database: AsyncIOMotorDatabase = Depends(get_db)):
+    await database["posts"].delete_one({"_id": post.id})
