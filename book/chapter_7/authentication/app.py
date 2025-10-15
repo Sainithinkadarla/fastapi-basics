@@ -8,7 +8,7 @@ from sqlalchemy import exc, select
 from models import User as UserModel, AccessToken, datetime, timezone
 from authentication import authenticate, create_access_token
 
-
+@asynccontextmanager
 async def lifespan(app:FastAPI):
     await create_all_tables()
     yield
