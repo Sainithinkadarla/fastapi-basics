@@ -12,6 +12,7 @@ async def lifespan(app:FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Storing a user their password securely
 @app.post("/register", response_model=UserRead, status_code = status.HTTP_201_CREATED)
 async def register_user(user_create: UserCreate, 
                         database: AsyncSession = Depends(get_async_session)):
