@@ -11,7 +11,7 @@ async def lifespan(websocket:WebSocket):
     yield 
     await broadcast.disconnect()
 
-broadcast = broadcaster.Broadcast("redis://localhost:6379")
+broadcast = broadcaster.Broadcast("redis://172.17.0.3:6379")
 channel = "chat"
 
 class MessageEvent(BaseModel):
