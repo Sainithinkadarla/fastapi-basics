@@ -23,7 +23,7 @@ class MessageEvent(BaseModel):
 async def receive_message(websocket: WebSocket, username: str):
     async with broadcast.subscribe(channel=channel) as subscriber:
         async for event in subscriber:
-            message_event = MessageEvent.parse_raw(event.message)
+            message_event = MessageEvent.model_validate_json(event.message)
             if message_event.username != username:
                 await websocket.send_json(message_event.model_dump())
 
