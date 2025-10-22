@@ -1,4 +1,5 @@
-from ext_api import app
+from ext_api import app, external
+from fastapi import status
 import pytest
 from asgi_lifespan import LifespanManager
 import pytest_asyncio
@@ -32,4 +33,14 @@ def event_loop():
 async def test_client():
     app.dependencies_overrides[external] = MockExternalAPI()
     async with LifespanManager():
-        async with httpx.AsyncC
+        async with httpx.AsyncClient(base_url="http://localhost:8000") as client:
+            yield client
+
+@pytest.mark.asyncio
+async def test_ext(test_client: httpx.AsyncClient):
+    response = await test_client.get("/products")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    json = response.json()
+    assert json == MockExternalAPI.mock_data
