@@ -6,10 +6,10 @@ app = FastAPI()
 
 class ExternalAPI:
     def __init__(self):
-        self.client = httpx.AsyncClient(base_url= "https://dummyjson.com")
+        self.base_url = "https://dummyjson.com"
     
     async def __call__(self) -> dict[str, Any]:
-        async with self.client as client:
+        async with httpx.AsyncClient(base_url=self.base_url) as client:
             response = await client.get("/products")
             return response.json()
 

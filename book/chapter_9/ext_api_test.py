@@ -1,10 +1,11 @@
-from ext_api import app, external
+from book.chapter_9.ext_api import app, external
 from fastapi import status
 import pytest
 from asgi_lifespan import LifespanManager
 import pytest_asyncio
 import asyncio
 import httpx
+print(app)
 
 class MockExternalAPI:
     mock_data = {
@@ -20,8 +21,10 @@ class MockExternalAPI:
         "skip": 0,
         "limit": 30,
     }
-    def __call__(self):
+    async def __call__(self):
         return MockExternalAPI.mock_data
+
+mock_external_api_instance = MockExternalAPI()
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -31,9 +34,10 @@ def event_loop():
 
 @pytest_asyncio.fixture
 async def test_client():
-    app.dependencies_overrides[external] = MockExternalAPI()
-    async with LifespanManager():
-        async with httpx.AsyncClient(base_url="http://localhost:8000") as client:
+    app.dependency_overrides[external] = mock_external_api_instance
+    async with LifespanManager(app):
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app)
+                                     , base_url="http://localhost:8000") as client:
             yield client
 
 @pytest.mark.asyncio
