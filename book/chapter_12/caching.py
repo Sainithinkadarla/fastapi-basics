@@ -47,7 +47,7 @@ async def lifespan(app:FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 @app.post("/predict")
-async def prediction(output: PredictionOutput = Depends(news_group_model.predict)):
+def prediction(output: PredictionOutput = Depends(news_group_model.predict)):
     return output
 
 @app.delete("/cache", status_code=status.HTTP_204_NO_CONTENT)
