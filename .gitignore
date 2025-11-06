@@ -12,3 +12,4 @@ share/
 *.png
 */test.py
 *cache.joblib
+*.png
