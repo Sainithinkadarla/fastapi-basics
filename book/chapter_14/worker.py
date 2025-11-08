@@ -14,7 +14,7 @@ class Text2ImageMiddleware(Middleware):
         return super().after_process_boot(broker)
 
 text_to_image_middleware = Text2ImageMiddleware()
-redis_broker = RedisBroker(host = "172.17.0.3")
+redis_broker = RedisBroker(host = "192.168.29.94")
 redis_broker.add_middleware(text_to_image_middleware)
 dramatiq.set_broker(redis_broker)
 
