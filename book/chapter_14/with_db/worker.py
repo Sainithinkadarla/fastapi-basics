@@ -73,6 +73,6 @@ def text_to_image_task(image_id: int):
     storage = Storage()
     storage.upload_image(image_output, filename, settings.storage_bucket)
 
-    update_file_name(image, filename)
+    update_filename(image, filename)
 
     image.save(f"{uuid.uuid4()}.png")
