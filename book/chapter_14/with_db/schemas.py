@@ -7,7 +7,7 @@ class GeneratedImageBase(BaseModel):
     steps: int = Field(50, ge=0, le=50)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class GeneratedImageCreate(GeneratedImageBase):
     pass
