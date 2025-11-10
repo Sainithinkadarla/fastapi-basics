@@ -66,13 +66,11 @@ def text_to_image_task(image_id: int):
             prompt=image.prompt, 
             negative_prompt=image.negative_prompt, 
             steps=image.steps,
-            callback=callback
+            callback = callback
     )
-    filename = f"{uuid.uuid4}.png"
+    filename = f"{uuid.uuid4()}.png"
 
     storage = Storage()
     storage.upload_image(image_output, filename, settings.storage_bucket)
 
     update_filename(image, filename)
-
-    image.save(f"{uuid.uuid4()}.png")

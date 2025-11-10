@@ -23,8 +23,8 @@ class Text2Image:
             raise RuntimeError("Model is not loaded")
         return self.pipe(prompt, negative_prompt = negative_prompt, 
                          num_inference_steps=steps, 
-                         callback= callback,
-                         callback_steps = 10,
+                         callback = callback,
+                         callback_steps = 1,
                          guidance_scale = 0.9).images[0]
     
 if __name__ == "__main__":

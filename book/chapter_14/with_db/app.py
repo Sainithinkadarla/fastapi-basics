@@ -53,6 +53,6 @@ async def get_presigned_image_url(image: GenereatedImages = Depends(get_image_or
     if image.filename is None: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
                             detail="There is no such image. Please try again")
-    url = storage.get_presigned_url(image.filename, settings.storage_bucket)
+    url = storage.get_presigned_url(object_name=image.filename, bucket_name=settings.storage_bucket)
 
     return GeneratedImageURL(url=url)

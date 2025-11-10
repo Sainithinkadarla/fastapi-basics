@@ -22,7 +22,7 @@ class Storage:
 		
 		image_data = io.BytesIO()
 		image.save(image_data, format="PNG")
-		image.seek(0)
+		image_data.seek(0)
 		image_data_length = len(image_data.getvalue())
 
 		self.client.put_object(bucket_name, object_name, image_data, length=image_data_length, content_type="image/png")
