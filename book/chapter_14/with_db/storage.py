@@ -16,6 +16,7 @@ class Storage:
 		bucket_exists = self.client.bucket_exists(bucket_name=bucket_name)
 		if not bucket_exists:
 			self.client.make_bucket(bucket_name=bucket_name)
+			
 	def upload_image(self, image: Image, object_name: str, bucket_name: str):
 		self.ensure_bucket(bucket_name)
 		
