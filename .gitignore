@@ -13,3 +13,4 @@ share/
 */test.py
 *cache.joblib
 *.png
+*.log
